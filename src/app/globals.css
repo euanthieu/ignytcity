@@ -138,3 +138,69 @@
     transform: scale(1.05);
   }
 }
+
+/* ==========================================================================
+   IGNYT CITY storefront — ALIGNE-derived editorial design tokens.
+   Scoped to .ic-store so the rest of the app (dashboard/admin) is untouched.
+   ========================================================================== */
+.ic-store {
+  --ic-charcoal: #24170f;
+  --ic-black: #151515;
+  --ic-white: #ffffff;
+  --ic-ash: #ececec;
+  --ic-signal: #0073ff;
+  --ic-flame: #e0301e;
+
+  --font-mono:
+    var(--font-jetbrains-mono), "GT America Mono", ui-monospace, SFMono-Regular,
+    Menlo, Monaco, Consolas, monospace;
+  --font-display:
+    var(--font-oswald), "Nimbus Sans Extended", ui-sans-serif, system-ui,
+    sans-serif;
+
+  background: #ffffff;
+  color: #151515;
+  font-family: var(--font-mono);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.dark .ic-store {
+  background: #14100d;
+  color: #f5f2ee;
+}
+
+.ic-store * {
+  border-radius: 0 !important;
+}
+
+.ic-store .ic-display {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ic-store .ic-mono {
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ic-store ::selection {
+  background: var(--ic-flame);
+  color: var(--ic-white);
+}
+
+@keyframes ic-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.ic-marquee-track {
+  animation: ic-marquee 22s linear infinite;
+}

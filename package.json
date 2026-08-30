@@ -28,6 +28,7 @@
     "@aws-sdk/s3-request-presigner": "3.1078.0",
     "@tanstack/react-query": "^5.101.2",
     "@tanstack/react-query-devtools": "^5.101.2",
+    "@upstash/redis": "^1.38.3",
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "framer-motion": "^12.42.2",

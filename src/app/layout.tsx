@@ -1,5 +1,11 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Poppins } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Poppins,
+  Oswald,
+  JetBrains_Mono,
+} from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/shared/lib/providers/query-provider";
 import { Toaster } from "sonner";
@@ -22,22 +28,32 @@ const poppins = Poppins({
   weight: ["300", "400", "500", "600", "700"],
 });
 
+const oswald = Oswald({
+  variable: "--font-oswald",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+});
+
 export const metadata: Metadata = {
   title: {
-    template: "%s | NextTemplate",
-    default: "NextTemplate | Enterprise Next.js Scaffold",
+    template: "%s | IGNYT CITY",
+    default: "IGNYT CITY | Pre-Order Merch",
   },
-  description:
-    "A production-ready Enterprise Next.js Scaffold.",
+  description: "IGNYT CITY pre-order merch drop. Where darkness has to end.",
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "https://next-template.dev",
   ),
   openGraph: {
-    title: "NextTemplate | Enterprise Next.js Scaffold",
-    description:
-      "A production-ready Enterprise Next.js Scaffold.",
+    title: "IGNYT CITY | Pre-Order Merch",
+    description: "IGNYT CITY pre-order merch drop. Where darkness has to end.",
     url: "https://next-template.dev",
-    siteName: "NextTemplate",
+    siteName: "IGNYT CITY",
     images: [
       {
         url: "/og-image.png",
@@ -50,9 +66,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NextTemplate | Enterprise Next.js Scaffold",
-    description:
-      "Connecting 450M Offline Stores to the World Through a Map, a Photo, and a Pickup.",
+    title: "IGNYT CITY | Pre-Order Merch",
+    description: "IGNYT CITY pre-order merch drop. Where darkness has to end.",
     images: ["/og-image.png"],
   },
   icons: {
@@ -69,7 +84,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} font-[family-name:var(--font-poppins)] antialiased bg-background-primary text-text-primary min-h-screen flex flex-col`}
+        className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} ${oswald.variable} ${jetbrainsMono.variable} font-[family-name:var(--font-poppins)] antialiased bg-background-primary text-text-primary min-h-screen flex flex-col`}
       >
         <ThemeProvider
           attribute="class"
