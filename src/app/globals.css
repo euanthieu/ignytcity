@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "mapbox-gl/dist/mapbox-gl.css";
+
+/* 2026 Theme Options:
+  Option 1: Cyberpunk Blue (Deep Blue & Electric Cyan) - ACTIVE
+  --brand-core: #0ea5e9; --brand-vibrant: #22d3ee; --brand-burgundy: #0c4a6e; --brand-dark: #082f49; --brand-light: #7dd3fc;
+*/
+
+@layer base {
+  :root {
+    /* Cyberpunk Blue Light Mode */
+    --brand-core: #0ea5e9;
+    --brand-vibrant: #22d3ee;
+    --brand-burgundy: #0c4a6e;
+    --brand-dark: #082f49;
+    --brand-light: #7dd3fc;
+
+    --background-primary: #ffffff;
+    --background-secondary: #f0f9ff;
+    --background-tertiary: #e0f2fe;
+    --background-elevated: #ffffff;
+
+    --text-primary: #082f49;
+    --text-secondary: #0c4a6e;
+    --text-tertiary: #0284c7;
+    --text-quaternary: #38bdf8;
+
+    --border-default: rgba(14, 165, 233, 0.15);
+    --border-light: rgba(14, 165, 233, 0.08);
+    --border-strong: rgba(14, 165, 233, 0.3);
+  }
+
+  .dark {
+    /* Cyberpunk Blue Dark Mode */
+    --brand-core: #0ea5e9;
+    --brand-vibrant: #22d3ee;
+    --brand-burgundy: #0c4a6e;
+    --brand-dark: #082f49;
+    --brand-light: #7dd3fc;
+
+    --background-primary: #082f49;
+    --background-secondary: #0c4a6e;
+    --background-tertiary: #0f172a;
+    --background-elevated: #0c4a6e;
+
+    --text-primary: #f0f9ff;
+    --text-secondary: #7dd3fc;
+    --text-tertiary: #38bdf8;
+    --text-quaternary: #0ea5e9;
+
+    --border-default: rgba(34, 211, 238, 0.2);
+    --border-light: rgba(34, 211, 238, 0.1);
+    --border-strong: rgba(34, 211, 238, 0.4);
+  }
+
+  body {
+    background: var(--background-primary);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer components {
+  /* Enhanced 2026 Glassmorphism */
+  .glass {
+    background: rgba(8, 47, 73, 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .glass-light {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+@layer utilities {
+  /* Shimmer/Glow effects mapped to Cyberpunk Blue tokens */
+  .glow-primary {
+    box-shadow: 0 0 20px rgba(14, 165, 233, 0.4);
+  }
+
+  .glow-vibrant {
+    box-shadow: 0 0 25px rgba(34, 211, 238, 0.5);
+  }
+
+  /* Futuristic Gradient Text updated for Cyberpunk */
+  .text-gradient-2026 {
+    background: linear-gradient(135deg, #ffffff 0%, #22d3ee 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .text-gradient-soft {
+    background: linear-gradient(135deg, #7dd3fc 0%, #0ea5e9 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Animations */
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 4s ease-in-out infinite;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
