@@ -40,12 +40,15 @@ const envSchema = z.object({
 
   // ── Feature Flags ─────────────────────────────────────────────────────────
   /** Runtime environment name. Drives feature flag defaults. */
-  NEXT_PUBLIC_APP_ENV: z
-    .enum(["development", "staging", "production"], {
-      error:
-        "NEXT_PUBLIC_APP_ENV must be one of: development, staging, production.",
-    })
-    .default("development"),
+  NEXT_PUBLIC_APP_ENV: z.preprocess(
+    blankToUndefined,
+    z
+      .enum(["development", "staging", "production"], {
+        error:
+          "NEXT_PUBLIC_APP_ENV must be one of: development, staging, production.",
+      })
+      .default("development"),
+  ),
 });
 
 /**
