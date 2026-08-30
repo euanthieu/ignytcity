@@ -9,24 +9,34 @@ import { z } from "zod";
  *
  * Usage: import { env } from "@/shared/lib/env";
  */
+/** Treats an empty/blank string the same as an absent variable — Vercel's `--env FOO=` (empty secret) sets "", not undefined. */
+const blankToUndefined = (val: unknown) =>
+  typeof val === "string" && val.trim() === "" ? undefined : val;
+
 const envSchema = z.object({
   // ── API ──────────────────────────────────────────────────────────────────
   /** Base URL of the backend REST API. Optional — unused by the storefront; only the legacy dashboard/seller features call it. */
-  NEXT_PUBLIC_API_URL: z
-    .string()
-    .url({
-      message:
-        "NEXT_PUBLIC_API_URL must be a valid URL (e.g. https://api.example.com).",
-    })
-    .optional()
-    .default("http://localhost:3001"),
+  NEXT_PUBLIC_API_URL: z.preprocess(
+    blankToUndefined,
+    z
+      .string()
+      .url({
+        message:
+          "NEXT_PUBLIC_API_URL must be a valid URL (e.g. https://api.example.com).",
+      })
+      .optional()
+      .default("http://localhost:3001"),
+  ),
 
   // ── Site ─────────────────────────────────────────────────────────────────
   /** Canonical public URL of this frontend (used for OG tags, sitemap). Optional in dev. */
-  NEXT_PUBLIC_SITE_URL: z
-    .string()
-    .url({ message: "NEXT_PUBLIC_SITE_URL must be a valid URL." })
-    .optional(),
+  NEXT_PUBLIC_SITE_URL: z.preprocess(
+    blankToUndefined,
+    z
+      .string()
+      .url({ message: "NEXT_PUBLIC_SITE_URL must be a valid URL." })
+      .optional(),
+  ),
 
   // ── Feature Flags ─────────────────────────────────────────────────────────
   /** Runtime environment name. Drives feature flag defaults. */
