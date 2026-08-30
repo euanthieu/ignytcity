@@ -11,13 +11,15 @@ import { z } from "zod";
  */
 const envSchema = z.object({
   // ── API ──────────────────────────────────────────────────────────────────
-  /** Base URL of the backend REST API. Must be a valid URL. */
+  /** Base URL of the backend REST API. Optional — unused by the storefront; only the legacy dashboard/seller features call it. */
   NEXT_PUBLIC_API_URL: z
-    .string({ error: "NEXT_PUBLIC_API_URL is required." })
+    .string()
     .url({
       message:
         "NEXT_PUBLIC_API_URL must be a valid URL (e.g. https://api.example.com).",
-    }),
+    })
+    .optional()
+    .default("http://localhost:3001"),
 
   // ── Site ─────────────────────────────────────────────────────────────────
   /** Canonical public URL of this frontend (used for OG tags, sitemap). Optional in dev. */
