@@ -1,0 +1,28 @@
+{
+  "recommendations": [
+    // ── Core DX ──────────────────────────────────────────────────────────────
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+
+    // ── TypeScript ────────────────────────────────────────────────────────────
+    "ms-vscode.vscode-typescript-next",
+
+    // ── Error & Diagnostics ───────────────────────────────────────────────────
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker",
+
+    // ── Git ────────────────────────────────────────────────────────────────────
+    "eamodio.gitlens",
+    "vivaxy.vscode-conventional-commits",
+
+    // ── Testing ────────────────────────────────────────────────────────────────
+    "vitest.explorer",
+    "ms-playwright.playwright",
+
+    // ── Productivity ───────────────────────────────────────────────────────────
+    "christian-kohler.path-intellisense",
+    "formulahendry.auto-rename-tag",
+    "PKief.material-icon-theme"
+  ]
+}
