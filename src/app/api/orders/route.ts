@@ -86,6 +86,7 @@ async function syncToSheet(
             name: order.name,
             contact: order.contact,
             socialMedia: order.socialMedia,
+            notes: order.notes,
             size: item.size,
             design: item.productName,
             paymentMethod: order.paymentMethod,

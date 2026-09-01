@@ -10,7 +10,7 @@
  * changes. Creating a *new* deployment mints a new URL and breaks the site.
  *
  * Columns, in order: NAME | SIZE | DESIGN | CONTACT NO. | PAYMENT STATUS |
- * SCREENSHOT | ORDER # | SOCIAL MEDIA ACCOUNT
+ * SCREENSHOT | ORDER # | SOCIAL MEDIA ACCOUNT | NOTES
  */
 
 /** Must match GOOGLE_SHEETS_SHARED_SECRET in Vercel and .env.local. */
@@ -58,6 +58,7 @@ function doPost(e) {
         screenshot ? '=HYPERLINK("' + screenshot + '","View Screenshot")' : "",
         "'" + String(data.orderId || "").slice(0, 8),
         data.socialMedia || "",
+        data.notes || "",
       ]);
     } finally {
       lock.releaseLock();
