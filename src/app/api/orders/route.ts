@@ -43,14 +43,14 @@ const SHEET_SYNC_TIMEOUT_MS = 10_000;
 async function syncToSheet(
   order: z.infer<typeof OrderSchema>,
   orderId: string,
-): Promise<boolean> {
+): Promise<{ synced: boolean; detail: string }> {
   const webAppUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL?.trim();
   const secret = process.env.GOOGLE_SHEETS_SHARED_SECRET?.trim();
   if (!webAppUrl || !secret) {
     console.warn(
       "[orders] GOOGLE_SHEETS_WEBAPP_URL/SECRET not set — skipping sheet sync",
     );
-    return false;
+    return { synced: false, detail: "not_configured" };
   }
 
   try {
@@ -78,10 +78,22 @@ async function syncToSheet(
         }),
       ),
     );
-    return results.every((r) => r.ok);
+    const bad = results.find((r) => !r.ok);
+    if (bad) {
+      // Apps Script answers a rejected request with 200 + an error body just as
+      // often as a 4xx, so record the body too — a mismatched shared secret is
+      // otherwise indistinguishable from success.
+      const body = await bad.text().catch(() => "");
+      console.error(
+        `[orders] sheet sync rejected: HTTP ${bad.status} ${body.slice(0, 200)}`,
+      );
+      return { synced: false, detail: `http_${bad.status}` };
+    }
+    return { synced: true, detail: "ok" };
   } catch (err) {
+    const timedOut = err instanceof Error && err.name === "TimeoutError";
     console.error("[orders] sheet sync failed", err);
-    return false;
+    return { synced: false, detail: timedOut ? "timeout" : "network_error" };
   }
 }
 
@@ -141,9 +153,14 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const sheetSynced = await syncToSheet(order, orderId);
+  const sheet = await syncToSheet(order, orderId);
 
-  return Response.json({ orderId, total, sheetSynced });
+  return Response.json({
+    orderId,
+    total,
+    sheetSynced: sheet.synced,
+    sheetDetail: sheet.detail,
+  });
 }
 
 /**
