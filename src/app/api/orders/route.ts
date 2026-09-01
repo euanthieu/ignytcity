@@ -37,6 +37,26 @@ const OrderSchema = z
     },
   );
 
+/**
+ * Apps Script web apps can only answer 200, so a rejected shared secret comes
+ * back as an ordinary response carrying {ok:false}. Only an explicit rejection
+ * counts as failure: a deployment predating docs/apps-script/Code.gs answers
+ * with something else entirely, and its rows do land.
+ */
+function isRejected(body: string): boolean {
+  try {
+    const parsed: unknown = JSON.parse(body);
+    return (
+      typeof parsed === "object" &&
+      parsed !== null &&
+      "ok" in parsed &&
+      (parsed as { ok: unknown }).ok === false
+    );
+  } catch {
+    return false;
+  }
+}
+
 /** Sheet sync is best-effort — it must never outlive the checkout request. */
 const SHEET_SYNC_TIMEOUT_MS = 10_000;
 
@@ -91,6 +111,17 @@ async function syncToSheet(
       );
       return { synced: false, detail: `http_${bad.status}` };
     }
+    const bodies = await Promise.all(
+      results.map((r) => r.text().catch(() => "")),
+    );
+    const rejection = bodies.find(isRejected);
+    if (rejection !== undefined) {
+      console.error(
+        `[orders] sheet sync rejected by Apps Script: ${rejection.slice(0, 200)}`,
+      );
+      return { synced: false, detail: "rejected" };
+    }
+
     return { synced: true, detail: "ok" };
   } catch (err) {
     const timedOut = err instanceof Error && err.name === "TimeoutError";
