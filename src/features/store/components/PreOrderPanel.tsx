@@ -11,6 +11,7 @@ type PaymentMethod = "gcash" | "bdo" | "in_person";
 interface FormState {
   name: string;
   contact: string;
+  socialMedia: string;
   address: string;
   notes: string;
   paymentMethod: PaymentMethod;
@@ -19,6 +20,7 @@ interface FormState {
 const EMPTY_FORM: FormState = {
   name: "",
   contact: "",
+  socialMedia: "",
   address: "",
   notes: "",
   paymentMethod: "gcash",
@@ -78,7 +80,8 @@ export function PreOrderPanel() {
     e.preventDefault();
     setError(null);
 
-    if (items.length === 0 || !form.name || !form.contact) return;
+    if (items.length === 0 || !form.name || !form.contact || !form.socialMedia)
+      return;
     if (form.paymentMethod !== "in_person" && !screenshot) {
       setError(
         "Please attach your payment screenshot, or choose to pay in person.",
@@ -99,6 +102,7 @@ export function PreOrderPanel() {
         body: JSON.stringify({
           name: form.name,
           contact: form.contact,
+          socialMedia: form.socialMedia,
           address: form.address || undefined,
           notes: form.notes || undefined,
           paymentMethod: form.paymentMethod,
@@ -217,6 +221,24 @@ export function PreOrderPanel() {
                 className="ic-mono text-[13px] normal-case tracking-normal border border-[#151515]/30 dark:border-[#f5f2ee]/30 bg-transparent text-[#151515] dark:text-[#f5f2ee] px-4 py-3 focus:outline-none focus:border-[#151515] dark:focus:border-[#f5f2ee]"
                 placeholder="0917 000 0000"
               />
+            </label>
+
+            <label className="flex flex-col gap-2">
+              <span className="ic-mono text-[10px] text-[#151515]/60 dark:text-[#f5f2ee]/60">
+                Social Media Account
+              </span>
+              <input
+                required
+                value={form.socialMedia}
+                onChange={(e) =>
+                  setForm((f) => ({ ...f, socialMedia: e.target.value }))
+                }
+                className="ic-mono text-[13px] normal-case tracking-normal border border-[#151515]/30 dark:border-[#f5f2ee]/30 bg-transparent text-[#151515] dark:text-[#f5f2ee] px-4 py-3 focus:outline-none focus:border-[#151515] dark:focus:border-[#f5f2ee]"
+                placeholder="@yourhandle (Instagram or Facebook)"
+              />
+              <span className="ic-mono text-[10px] normal-case tracking-normal text-[#151515]/50 dark:text-[#f5f2ee]/50">
+                So we can message you about your order.
+              </span>
             </label>
 
             <label className="flex flex-col gap-2">

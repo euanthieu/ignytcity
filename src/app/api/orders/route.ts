@@ -20,6 +20,7 @@ const OrderSchema = z
   .object({
     name: z.string().min(1, "Name is required"),
     contact: z.string().min(1, "Contact is required"),
+    socialMedia: z.string().min(1, "Social media account is required"),
     address: z.string().optional(),
     notes: z.string().optional(),
     paymentMethod: z.enum(["gcash", "bdo", "in_person"]),
@@ -64,6 +65,7 @@ async function syncToSheet(
             orderId,
             name: order.name,
             contact: order.contact,
+            socialMedia: order.socialMedia,
             size: item.size,
             design: item.productName,
             paymentMethod: order.paymentMethod,
