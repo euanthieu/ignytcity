@@ -1,6 +1,10 @@
 import { NextRequest } from "next/server";
 import { z } from "zod";
-import { getRedis } from "@/shared/lib/upstash";
+import {
+  getRedis,
+  missingUpstashVars,
+  UpstashNotConfiguredError,
+} from "@/shared/lib/upstash";
 
 export const runtime = "nodejs";
 
@@ -32,13 +36,16 @@ const OrderSchema = z
     },
   );
 
+/** Sheet sync is best-effort — it must never outlive the checkout request. */
+const SHEET_SYNC_TIMEOUT_MS = 10_000;
+
 /** Pushes one row per order line item to the Apps Script Web App bound to the pre-order sheet. */
 async function syncToSheet(
   order: z.infer<typeof OrderSchema>,
   orderId: string,
 ): Promise<boolean> {
-  const webAppUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL;
-  const secret = process.env.GOOGLE_SHEETS_SHARED_SECRET;
+  const webAppUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL?.trim();
+  const secret = process.env.GOOGLE_SHEETS_SHARED_SECRET?.trim();
   if (!webAppUrl || !secret) {
     console.warn(
       "[orders] GOOGLE_SHEETS_WEBAPP_URL/SECRET not set — skipping sheet sync",
@@ -63,6 +70,11 @@ async function syncToSheet(
             screenshotBase64: order.screenshotBase64,
             screenshotMimeType: order.screenshotMimeType,
           }),
+          // A retired Apps Script deployment accepts the connection and never
+          // answers. Without this the order request hangs until the platform
+          // kills it, and the customer sees a failure for an order we already
+          // saved. The sheet row is recoverable; the checkout is not.
+          signal: AbortSignal.timeout(SHEET_SYNC_TIMEOUT_MS),
         }),
       ),
     );
@@ -102,10 +114,28 @@ export async function POST(req: NextRequest) {
     await redis.set(`order:${orderId}`, record);
     await redis.lpush("orders:index", orderId);
   } catch (err) {
-    console.error("[orders] Upstash write failed", err);
+    if (err instanceof UpstashNotConfiguredError) {
+      console.error(
+        `[orders] order storage is unconfigured — set ${err.missing.join(" and ")} in this deployment's environment, then redeploy`,
+      );
+      return Response.json(
+        {
+          error:
+            "Order storage is not configured on this deployment. Please contact us to complete your order.",
+          code: "storage_not_configured",
+        },
+        { status: 503 },
+      );
+    }
+
+    console.error(
+      "[orders] Upstash write failed",
+      err instanceof Error ? `${err.name}: ${err.message}` : err,
+    );
     return Response.json(
       {
         error: "Could not save your order right now. Please try again shortly.",
+        code: "storage_write_failed",
       },
       { status: 500 },
     );
@@ -114,4 +144,49 @@ export async function POST(req: NextRequest) {
   const sheetSynced = await syncToSheet(order, orderId);
 
   return Response.json({ orderId, total, sheetSynced });
+}
+
+/**
+ * Config diagnostic. Reports only which variables are absent and whether a live
+ * round-trip to Upstash succeeds — never the values themselves — so a broken
+ * deployment can be identified from the browser.
+ */
+export async function GET() {
+  const missing = missingUpstashVars();
+  const sheetsConfigured = Boolean(
+    process.env.GOOGLE_SHEETS_WEBAPP_URL?.trim() &&
+    process.env.GOOGLE_SHEETS_SHARED_SECRET?.trim(),
+  );
+
+  if (missing.length > 0) {
+    return Response.json(
+      {
+        ok: false,
+        storage: "not_configured",
+        missingEnvVars: missing,
+        sheetsConfigured,
+      },
+      { status: 503 },
+    );
+  }
+
+  try {
+    const redis = getRedis();
+    const probe = `orders:healthcheck:${crypto.randomUUID()}`;
+    await redis.set(probe, "ok", { ex: 60 });
+    await redis.del(probe);
+  } catch (err) {
+    return Response.json(
+      {
+        ok: false,
+        storage: "unreachable",
+        reason:
+          err instanceof Error ? `${err.name}: ${err.message}` : "unknown",
+        sheetsConfigured,
+      },
+      { status: 503 },
+    );
+  }
+
+  return Response.json({ ok: true, storage: "ready", sheetsConfigured });
 }
