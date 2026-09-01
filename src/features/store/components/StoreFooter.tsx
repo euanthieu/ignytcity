@@ -78,7 +78,7 @@ export function StoreFooter() {
             &copy; {new Date().getFullYear()} Ignyt City. All rights reserved.
           </p>
           <p className="ic-mono text-[10px] text-[#ffffff]/40">
-            2600 &middot; 09.11.26
+            2600 &middot; Ignyt City 09.11.26
           </p>
         </div>
       </div>

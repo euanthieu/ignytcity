@@ -49,7 +49,7 @@ export function Hero() {
 
       <div className="relative z-10 h-full flex flex-col items-center justify-start text-center px-5 pt-32 sm:pt-40">
         <p className="ic-mono text-[10px] tracking-[3px] text-[#ffffff]/70 mb-4">
-          Pre-Order Merch &middot; Drops 09.11.26
+          Pre-Order Merch &middot; Pick Up Sun Sept 6 &middot; Wear It Sept 11
         </p>
         <h1 className="ic-display text-[#ffffff] text-[42px] leading-[1.05] tracking-[2px] sm:text-[68px] sm:leading-[1.02] sm:tracking-[6px] max-w-4xl">
           Where Darkness
