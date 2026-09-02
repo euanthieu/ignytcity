@@ -13,8 +13,17 @@
  * SCREENSHOT | ORDER # | SOCIAL MEDIA ACCOUNT | NOTES
  */
 
-/** Must match GOOGLE_SHEETS_SHARED_SECRET in Vercel and .env.local. */
-const SHARED_SECRET = "PASTE_YOUR_SECRET_HERE";
+/**
+ * The shared secret lives in Script Properties, NOT in this file:
+ * Project Settings > Script properties > add SHARED_SECRET, set it to the
+ * same value as GOOGLE_SHEETS_SHARED_SECRET in Vercel and .env.local.
+ *
+ * Keeping it out of the source means re-pasting this file can never silently
+ * break authentication, and the secret is not committed to the repo.
+ */
+function sharedSecret() {
+  return PropertiesService.getScriptProperties().getProperty("SHARED_SECRET");
+}
 
 /** Leave blank to use the first tab. */
 const SHEET_NAME = "";
@@ -35,7 +44,11 @@ function doPost(e) {
 
     // Constant-time-ish check is overkill here, but a plain mismatch must
     // never fall through to a write.
-    if (!SHARED_SECRET || data.secret !== SHARED_SECRET) {
+    const expected = sharedSecret();
+    if (!expected) {
+      return reply({ ok: false, error: "secret_not_configured" });
+    }
+    if (data.secret !== expected) {
       return reply({ ok: false, error: "unauthorized" });
     }
 
@@ -70,9 +83,17 @@ function doPost(e) {
   }
 }
 
-/** Lets you confirm from a browser that this deployment is reachable. */
+/**
+ * Lets you confirm from a browser that this deployment is reachable and
+ * configured. Reports only whether the secret is set, never its value.
+ */
 function doGet() {
-  return reply({ ok: true, service: "ignyt-city-preorder" });
+  return reply({
+    ok: true,
+    service: "ignyt-city-preorder",
+    secretConfigured: Boolean(sharedSecret()),
+    columns: 9,
+  });
 }
 
 function sheet() {
