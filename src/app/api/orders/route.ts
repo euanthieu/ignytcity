@@ -8,6 +8,13 @@ import {
 
 export const runtime = "nodejs";
 
+/**
+ * The sheet round-trip runs inside the checkout request, and Apps Script is
+ * markedly slower from Vercel than from a local machine. The default function
+ * budget was cutting the sync off before it finished.
+ */
+export const maxDuration = 30;
+
 const OrderItemSchema = z.object({
   productId: z.string(),
   productName: z.string(),
@@ -57,8 +64,13 @@ function isRejected(body: string): boolean {
   }
 }
 
-/** Sheet sync is best-effort — it must never outlive the checkout request. */
-const SHEET_SYNC_TIMEOUT_MS = 10_000;
+/**
+ * Sheet sync is best-effort — it must never outlive the checkout request.
+ * Measured round-trip is 2-4s, but Apps Script cold starts and the script lock
+ * push the tail well past 10s, which was dropping rows for orders that had
+ * already been paid for.
+ */
+const SHEET_SYNC_TIMEOUT_MS = 20_000;
 
 /** Pushes one row per order line item to the Apps Script Web App bound to the pre-order sheet. */
 async function syncToSheet(
