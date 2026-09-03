@@ -76,6 +76,7 @@ const SHEET_SYNC_TIMEOUT_MS = 20_000;
 async function syncToSheet(
   order: z.infer<typeof OrderSchema>,
   orderId: string,
+  createdAt: string,
 ): Promise<{ synced: boolean; detail: string }> {
   const webAppUrl = process.env.GOOGLE_SHEETS_WEBAPP_URL?.trim();
   const secret = process.env.GOOGLE_SHEETS_SHARED_SECRET?.trim();
@@ -99,6 +100,7 @@ async function syncToSheet(
             contact: order.contact,
             socialMedia: order.socialMedia,
             notes: order.notes,
+            createdAt,
             size: item.size,
             design: item.productName,
             paymentMethod: order.paymentMethod,
@@ -199,7 +201,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const sheet = await syncToSheet(order, orderId);
+  const sheet = await syncToSheet(order, orderId, record.createdAt);
 
   return Response.json({
     orderId,

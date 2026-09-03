@@ -10,7 +10,8 @@
  * changes. Creating a *new* deployment mints a new URL and breaks the site.
  *
  * Columns, in order: NAME | SIZE | DESIGN | CONTACT NO. | PAYMENT STATUS |
- * SCREENSHOT | ORDER # | SOCIAL MEDIA ACCOUNT | NOTES
+ * SCREENSHOT | ORDER # | SOCIAL MEDIA ACCOUNT | NOTES | ORDER DATE |
+ * ORDER DATE
  */
 
 /**
@@ -72,6 +73,7 @@ function doPost(e) {
         "'" + String(data.orderId || "").slice(0, 8),
         data.socialMedia || "",
         data.notes || "",
+        orderedAt(data.createdAt),
       ]);
     } finally {
       lock.releaseLock();
@@ -92,13 +94,24 @@ function doGet() {
     ok: true,
     service: "ignyt-city-preorder",
     secretConfigured: Boolean(sharedSecret()),
-    columns: 9,
+    columns: 10,
   });
 }
 
 function sheet() {
   const ss = SpreadsheetApp.getActive();
   return (SHEET_NAME && ss.getSheetByName(SHEET_NAME)) || ss.getSheets()[0];
+}
+
+/**
+ * The storefront sends an ISO-8601 UTC timestamp. Render it in Manila time so
+ * the column reads correctly no matter what timezone the spreadsheet is set
+ * to, in a shape that still sorts lexicographically.
+ */
+function orderedAt(iso) {
+  const when = iso ? new Date(iso) : new Date();
+  if (isNaN(when.getTime())) return "";
+  return Utilities.formatDate(when, "Asia/Manila", "yyyy-MM-dd HH:mm");
 }
 
 function paymentStatus(method) {
