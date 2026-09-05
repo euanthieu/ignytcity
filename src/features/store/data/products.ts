@@ -17,7 +17,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: "bete-difference",
-    name: "Bete Difference Tee",
+    name: "Be The Difference Tee",
     tagline: "Where Darkness Has to End",
     colorway: "Espresso Brown",
     fit: "Oversized",
