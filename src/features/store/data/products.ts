@@ -10,8 +10,8 @@ export const PRODUCTS: Product[] = [
     colorway: "Black",
     fit: "Boxy",
     price: 450,
-    front: "/products/black-burn-bright-front.jpg",
-    back: "/products/black-burn-bright-back.jpg",
+    front: "/products/burn-bright-front-v2.jpg",
+    back: "/products/burn-bright-back-v2.jpg",
     story:
       "Fuel the vision that lights the way. Igniting a generation to outshine the darkness.",
   },
@@ -22,8 +22,8 @@ export const PRODUCTS: Product[] = [
     colorway: "Espresso Brown",
     fit: "Boxy",
     price: 450,
-    front: "/products/brown-difference-front.jpg",
-    back: "/products/brown-difference-back.jpg",
+    front: "/products/be-the-difference-front-v2.jpg",
+    back: "/products/be-the-difference-back-v2.jpg",
     story: "A quiet chest mark up front, a statement across the back.",
   },
   {
