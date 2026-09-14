@@ -32,6 +32,9 @@ const PICKUP_NOTE =
 const SHIPPING_DISCLAIMER =
   "No shipping or delivery — pickup only, in person. Questions? DM @yth.ignyt on Instagram or Facebook, or call/text 0995 080 8552.";
 
+/** Flip back to true to reopen the form for the next drop. */
+const ORDERS_OPEN = false;
+
 export function PreOrderPanel() {
   const fileInputId = useId();
   const lines = useCartStore((s) => s.lines);
@@ -154,16 +157,35 @@ export function PreOrderPanel() {
           <h2 className="ic-display text-[32px] sm:text-[40px] tracking-[3px] text-[#151515] dark:text-[#f5f2ee]">
             How to Pre-Order
           </h2>
-          <p className="ic-mono text-[11px] normal-case tracking-normal text-[#151515]/60 dark:text-[#f5f2ee]/60 mt-3 max-w-md mx-auto leading-relaxed">
-            Payment first — this locks in your size and gets your shirt into
-            production. {PICKUP_NOTE}
-          </p>
-          <p className="ic-mono text-[10px] normal-case tracking-normal text-[#c0392b] mt-4 max-w-md mx-auto leading-relaxed">
-            {SHIPPING_DISCLAIMER}
-          </p>
+          {ORDERS_OPEN ? (
+            <>
+              <p className="ic-mono text-[11px] normal-case tracking-normal text-[#151515]/60 dark:text-[#f5f2ee]/60 mt-3 max-w-md mx-auto leading-relaxed">
+                Payment first — this locks in your size and gets your shirt into
+                production. {PICKUP_NOTE}
+              </p>
+              <p className="ic-mono text-[10px] normal-case tracking-normal text-[#c0392b] mt-4 max-w-md mx-auto leading-relaxed">
+                {SHIPPING_DISCLAIMER}
+              </p>
+            </>
+          ) : (
+            <p className="ic-mono text-[11px] normal-case tracking-normal text-[#151515]/60 dark:text-[#f5f2ee]/60 mt-3 max-w-md mx-auto leading-relaxed">
+              Thanks for the support — this drop is fully reserved.
+            </p>
+          )}
         </div>
 
-        {!result && (
+        {!ORDERS_OPEN && (
+          <div className="bg-[#ffffff] dark:bg-[#14100d] p-6 sm:p-10 flex flex-col items-center text-center gap-2">
+            <p className="ic-display text-[20px] sm:text-[24px] tracking-[2px] text-[#151515] dark:text-[#f5f2ee]">
+              Orders Are Now Closed
+            </p>
+            <p className="ic-mono text-[12px] normal-case tracking-normal text-[#151515]/60 dark:text-[#f5f2ee]/60 leading-relaxed">
+              Wait for the next drop.
+            </p>
+          </div>
+        )}
+
+        {ORDERS_OPEN && !result && (
           <form
             onSubmit={handleSubmit}
             className="bg-[#ffffff] dark:bg-[#14100d] p-6 sm:p-10 flex flex-col gap-5"
